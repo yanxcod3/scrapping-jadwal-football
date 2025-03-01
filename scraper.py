@@ -11,16 +11,28 @@ def scrape_data():
     response = requests.get(URL, headers=headers)
     if response.status_code != 200:
         print("❌ Failed to retrieve the webpage")
-        return None
+        return {
+            "status": "error",
+            "message": "Failed to retrieve the webpage",
+            "data": []
+        }
     
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    structured_data = { "data": [] }
+    structured_data = { 
+        "status": "success",
+        "message": "Data retrieved successfully",
+        "data": [] 
+    }
     
     # Find the main tabs content div
     tabs_content = soup.find("div", class_="tabs_content")
     if not tabs_content:
-        return structured_data
+        return {
+            "status": "error",
+            "message": "No data found",
+            "data": []
+        }
 
     date_map = {}  # Dictionary to track dates and their indices
 
@@ -46,7 +58,7 @@ def scrape_data():
                 else:
                     # Create new date data
                     current_date_data = {
-                        "Date": current_date,
+                        "date": current_date,
                         "leagues": []
                     }
                     date_map[current_date] = len(structured_data["data"])
@@ -98,5 +110,13 @@ def scrape_data():
                                 "time": match_time,
                                 "link": match_link
                             })
+
+    # Check if data is empty before returning
+    if len(structured_data["data"]) == 0:
+        structured_data["status"] = "error"
+        structured_data["message"] = "No matches data found"
+    elif len(structured_data["data"]) > 0:
+        structured_data["status"] = "success"
+        structured_data["message"] = f"Successfully retrieved {len(structured_data['data'])} days of matches"
 
     return structured_data
