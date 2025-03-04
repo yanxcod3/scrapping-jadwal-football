@@ -85,25 +85,6 @@ MAIN_PAGE_HTML = """
             border-radius: 4px;
             border-left: 4px solid #007bff;
         }
-        .daily-stats {
-            margin-top: 20px;
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 4px;
-        }
-        .daily-stats h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .daily-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .daily-item:last-child {
-            border-bottom: none;
-        }
     </style>
 </head>
 <body>
@@ -118,15 +99,6 @@ MAIN_PAGE_HTML = """
                 <div class="stat-value">{{ today_calls }}</div>
                 <div class="stat-label">Today's API Calls</div>
             </div>
-        </div>
-        <div class="daily-stats">
-            <h3>Daily Statistics</h3>
-            {% for date, count in daily_stats.items() %}
-            <div class="daily-item">
-                <span>{{ date }}</span>
-                <span>{{ count }} calls</span>
-            </div>
-            {% endfor %}
         </div>
         <div class="endpoint">
             <h3>Available Endpoints:</h3>
