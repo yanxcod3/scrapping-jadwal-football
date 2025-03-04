@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # File untuk menyimpan statistik
-STATS_FILE = 'api_stats.json'
+STATS_FILE = '/tmp/api_stats.json'  # Menggunakan /tmp untuk Vercel
 
 def load_stats():
     """Memuat statistik dari file JSON"""
@@ -195,5 +195,6 @@ def get_scraped_data():
     response = Response(json.dumps(data), mimetype="application/json")
     return response
 
+# Untuk development lokal
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
