@@ -3,13 +3,36 @@ from flask_cors import CORS
 import json
 from scraper import scrape_data
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 CORS(app)
 
+# File untuk menyimpan statistik
+STATS_FILE = 'api_stats.json'
+
+def load_stats():
+    """Memuat statistik dari file JSON"""
+    if os.path.exists(STATS_FILE):
+        try:
+            with open(STATS_FILE, 'r') as f:
+                data = json.load(f)
+                return data.get('total_calls', 0), data.get('daily_counter', {})
+        except json.JSONDecodeError:
+            return 0, {}
+    return 0, {}
+
+def save_stats():
+    """Menyimpan statistik ke file JSON"""
+    data = {
+        'total_calls': api_counter,
+        'daily_counter': daily_counter
+    }
+    with open(STATS_FILE, 'w') as f:
+        json.dump(data, f)
+
 # Counter untuk melacak penggunaan API
-api_counter = 0
-daily_counter = {}  # Dictionary untuk menyimpan counter harian
+api_counter, daily_counter = load_stats()
 
 # Template HTML untuk halaman utama
 MAIN_PAGE_HTML = """
@@ -124,6 +147,7 @@ def update_daily_counter():
     if today not in daily_counter:
         daily_counter[today] = 0
     daily_counter[today] += 1
+    save_stats()  # Simpan setiap kali ada update
     return daily_counter[today]
 
 @app.route("/")
